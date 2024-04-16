@@ -1,5 +1,6 @@
 from flask import Flask, render_template, redirect, flash
 from forms import ImageUploadForm
+from models import db, connect_db, Image
 import boto3
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
@@ -15,6 +16,8 @@ load_dotenv()
 
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["DATABASE_URL"]
 app.config['SQLALCHEMY_ECHO'] = False
+
+connect_db(app)
 
 # AWS S3 Configuration
 s3 = boto3.client(
@@ -45,6 +48,7 @@ def upload_photo():
             img = Image.open(image_file.stream)
 
             image_metadata = get_formatted_metadata(img)
+
             for key in image_metadata:
                 print(key, ": ", image_metadata[key])
 
@@ -53,6 +57,29 @@ def upload_photo():
                 bucket_name,
                 filename
             )
+
+            new_image = Image(
+                filename=filename,
+                gps=image_metadata["gps"],
+                mode=image_metadata["mode"],
+                format=image_metadata["format"],
+                height=image_metadata["height"],
+                width=image_metadata["width"],
+                datetime=image_metadata["datetime"],
+                focal_length=image_metadata["focal_length"],
+                shutterspeed=image_metadata["shutterspeed"],
+                aperture=image_metadata["aperture"],
+                iso=image_metadata["iso"],
+                fnumber=image_metadata["fnumber"],
+                exposure_time=image_metadata["exposure_time"],
+                lens_make=image_metadata["lens_make"],
+                lens_model=image_metadata["lens_model"],
+                device_make=image_metadata["device_make"],
+                device_model=image_metadata["device_model"],
+            )
+
+            db.session.add(new_image)
+            db.session.commit()
 
             flash("Image upload successful!")
             return redirect("/")

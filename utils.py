@@ -1,5 +1,6 @@
 import piexif
 from PIL.ExifTags import TAGS
+import datetime
 
 def get_formatted_metadata(img):
     metadata = extract_metadata(img)
@@ -30,8 +31,8 @@ def format_metadata(metadata):
         "gps": metadata.get("GPS"),
         "mode": metadata.get("mode"),
         "format": metadata.get("format"),
-        "height": metadata.get("size")[1],
-        "width": metadata.get("size")[0],
+        "height": metadata.get("size")[0],
+        "width": metadata.get("size")[1],
         "datetime": metadata.get("DateTimeOriginal"),
         "focal_length": metadata.get("FocalLength"),
         "shutterspeed": metadata.get("ShutterSpeedValue"),

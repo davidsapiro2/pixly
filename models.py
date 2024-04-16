@@ -36,7 +36,7 @@ class Image(db.Model):
 
 
     datetime = db.Column(
-        db.DateTime
+        db.Text
     )
 
     focal_length = db.Column(
@@ -60,7 +60,7 @@ class Image(db.Model):
     )
 
     exposure_time = db.Column(
-        db.DateTime,
+        db.Text,
     )
 
     lens_make = db.Column(
