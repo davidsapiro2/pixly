@@ -1,0 +1,13 @@
+Pixly:
+
+Backend:
+
+Images stored in AW3
+MetaData stored in database
+
+User Views:
+    /photos/upload
+    /photos view all photos (search field)
+    /photos/:photoId view a single photo (display metadata)
+    /photos/:photoId/edit page where they can make edits
+
