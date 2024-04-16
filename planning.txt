@@ -14,6 +14,7 @@ User Views:
 
 image metadata:
 
+filename - pkey
 GPS
 Mode
 Format

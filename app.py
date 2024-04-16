@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
 from PIL import Image
 import os
-from utils import extract_metadata
+from utils import get_formatted_metadata
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "oh-so-secret"
@@ -44,7 +44,7 @@ def upload_photo():
             filename = secure_filename(image_file.filename)
             img = Image.open(image_file.stream)
 
-            image_metadata = extract_metadata(img)
+            image_metadata = get_formatted_metadata(img)
             for key in image_metadata:
                 print(key, ": ", image_metadata[key])
 
