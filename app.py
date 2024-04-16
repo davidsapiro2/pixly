@@ -1,5 +1,7 @@
 from flask import Flask, render_template, redirect, flash
 from forms import ImageUploadForm
+import boto3
+from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
 import os
 
@@ -7,6 +9,15 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = "oh-so-secret"
 app.config['UPLOAD_FOLDER'] = "./uploaded_photos"
 
+load_dotenv()
+# AWS S3 Configuration
+s3 = boto3.client(
+    's3',
+    aws_access_key_id= os.getenv("AWS_ACCESS_KEY"),
+    aws_secret_access_key= os.getenv("AWS_SECRET_KEY"),
+    region_name= os.getenv("AWS_REGION"),
+)
+bucket_name = os.getenv("AWS_BUCKET_NAME")
 
 @app.get("/")
 def homepage():
@@ -25,7 +36,12 @@ def upload_photo():
         try:
             image_file = form.image.data
             filename = secure_filename(image_file.filename)
-            image_file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+            s3.upload_fileobj(
+                image_file,
+                bucket_name,
+                filename
+            )
 
             flash("Image upload successful!")
             return redirect("/")
