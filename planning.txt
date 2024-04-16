@@ -12,6 +12,24 @@ User Views:
     /photos/:photoId/edit page where they can make edits
 
 
+image metadata:
+
+GPS
+Mode
+Format
+Size
+Datetime
+focallength
+shutterspeed
+aperture
+iso
+fnumber
+exposuretime
+lens make and model
+phone make and model
+
+
+
 
     Login/authentication isn’t required; any web user can do everything
 

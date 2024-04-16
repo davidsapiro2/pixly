@@ -4,8 +4,8 @@ import boto3
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
 from PIL import Image
-import piexif
 import os
+from utils import extract_metadata
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "oh-so-secret"
@@ -43,14 +43,10 @@ def upload_photo():
             image_file = form.image.data
             filename = secure_filename(image_file.filename)
             img = Image.open(image_file.stream)
-            exif_dict = piexif.load(img.info['exif'])
 
-            print("exif_dict", exif_dict)
-            print("exif", img.info["exif"])
-            print(img.filename)
-            print(img.format)
-            print(img.mode)
-            print(img.size)
+            image_metadata = extract_metadata(img)
+            for key in image_metadata:
+                print(key, ": ", image_metadata[key])
 
             s3.upload_fileobj(
                 image_file,
