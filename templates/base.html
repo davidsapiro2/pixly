@@ -14,7 +14,7 @@
 
 <body>
 
-  <nav class="navbar navbar-expand bg-secondary">
+  <nav class="navbar navbar-expand bg-secondary mb-5">
     <div class="container-fluid">
 
       <div class="navbar-header">
@@ -31,14 +31,15 @@
     </div>
   </nav>
 
+  <div class="container">
+    {% for category, message in get_flashed_messages(with_categories=True) %}
+    <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+
   {% block content %}
   {% endblock %}
 
-  <div class="container">
-
-    {% for category, message in get_flashed_messages(with_categories=True) %}
-      <div class="alert alert-{{ category }}">{{ message }}</div>
-    {% endfor %}
 
 </body>
 

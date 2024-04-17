@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
 from PIL import Image as PillowImage
 import os
-from utils import get_formatted_metadata
+from utils import get_formatted_metadata, get_metadata_for_display
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "oh-so-secret"
@@ -23,11 +23,14 @@ connect_db(app)
 # AWS S3 Configuration
 s3 = boto3.client(
     's3',
-    aws_access_key_id= os.getenv("AWS_ACCESS_KEY"),
-    aws_secret_access_key= os.getenv("AWS_SECRET_KEY"),
-    region_name= os.getenv("AWS_REGION"),
+    aws_access_key_id=os.getenv("AWS_ACCESS_KEY"),
+    aws_secret_access_key=os.getenv("AWS_SECRET_KEY"),
+    region_name=os.getenv("AWS_REGION"),
 )
 bucket_name = os.getenv("AWS_BUCKET_NAME")
+
+base_url = f"https://{bucket_name}.s3.{os.getenv('AWS_REGION')}.amazonaws.com/"
+
 
 @app.get("/")
 def homepage():
@@ -49,8 +52,6 @@ def upload_photo():
 
             img = PillowImage.open(image_file)
             image_metadata = get_formatted_metadata(img)
-
-
 
             for key in image_metadata:
                 print(key, ": ", image_metadata[key])
@@ -103,7 +104,20 @@ def upload_photo():
 def display_photos():
 
     photos = Image.query.all()
-    base_url = f"https://{bucket_name}.s3.{os.getenv('AWS_REGION')}.amazonaws.com/"
 
     return render_template("all_photos.html", photos=photos, base_url=base_url)
 
+
+@app.get("/photos/<photo_name>")
+def display_photo(photo_name):
+
+    photo = Image.query.get_or_404(photo_name)
+    metadata = get_metadata_for_display(photo)
+
+    return render_template("display_photo.html", photo=photo, base_url=base_url, metadata=metadata)
+
+
+# @app.route("/photos/<photo_id>", methods=["GET", "POST"])
+# def edit_photo(photo_name):
+
+#     photo = Image.query.get_or_404(photo_name)

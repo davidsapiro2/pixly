@@ -2,15 +2,21 @@
 
 {% block content %}
 
-<div>
-  <ul>
-    {% for photo in photos %}
-    <li>
-      <img src="{{base_url}}{{photo.filename}}" alt="">
-    </li>
-    {% endfor %}
-  </ul>
+<div class="container">
+  <div class="row">
 
+    {% for photo in photos %}
+
+    <a class="col-8 offset-2" href="/photos/{{photo.filename}}">
+    <div class="card mb-4 p-4 bg-secondary">
+        <h6 class="text-light card-title mb-3">{{photo.filename}}</h6>
+        <img src="{{base_url}}{{photo.filename}}" alt="">
+      </div>
+    </a>
+
+    {% endfor %}
+
+  </div>
 </div>
 
 {% endblock %}

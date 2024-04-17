@@ -1,6 +1,27 @@
 import piexif
 from PIL.ExifTags import TAGS
 
+def get_metadata_for_display(photo):
+    return {
+        "Height": photo.height,
+        "Width": photo.width,
+        "Format": photo.format,
+        "Mode": photo.mode,
+        "Date taken": photo.datetime,
+        "Location Taken": photo.gps,
+        "Camera Make": photo.device_make,
+        "Camera Model": photo.device_model,
+        "Lens Make": photo.lens_make,
+        "Lens Model": photo.lens_model,
+        "Shutter Speed": photo.shutterspeed,
+        "Exposure Time": photo.exposure_time,
+        "Focal Length": photo.focal_length,
+        "Aperture": photo.aperture,
+        "F Number": photo.fnumber,
+        "ISO": photo.iso,
+    }
+
+
 
 def get_formatted_metadata(img):
     metadata = extract_metadata(img)

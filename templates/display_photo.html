@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container">
+  <div class="row">
+
+
+
+    <div class="card col-10 offset-1 mb-4 p-4 bg-secondary">
+      <h6 class="text-light card-title mb-3">{{photo.filename}}</h6>
+      <img src="{{base_url}}{{photo.filename}}" alt="">
+    </div>
+
+    <div class="card col-10 offset-1 mb-4 p-4 bg-secondary">
+      <h6 class="text-light card-title mb-3">Metadata</h6>
+      <ul>
+        {% for key in metadata %}
+        <li class="text-light">
+          {{key}}: {{metadata[key] or "Unknown"}}
+        </li>
+        {% endfor %}
+
+      </ul>
+    </div>
+
+
+  </div>
+</div>
+
+{% endblock %}
