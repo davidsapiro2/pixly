@@ -1,6 +1,7 @@
 from flask import Flask, render_template, redirect, flash
 from forms import ImageUploadForm
 from models import db, connect_db, Image
+from sqlalchemy.exc import IntegrityError
 import boto3
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
@@ -51,6 +52,7 @@ def upload_photo():
             image_metadata = get_formatted_metadata(img)
 
 
+
             for key in image_metadata:
                 print(key, ": ", image_metadata[key])
 
@@ -84,12 +86,16 @@ def upload_photo():
             db.session.add(new_image)
             db.session.commit()
 
-            flash("Image upload successful!")
+            flash("Image upload successful!", "success")
             return redirect("/photos")
 
-        except Exception as ex:
-            print("Exception", ex)
-            flash("Image upload failed!")
+        except IntegrityError as err:
+            print("Exception", err)
+            flash("Image name already taken.", "danger")
+
+        except Exception as err:
+            print("Exception", err)
+            flash("Image upload failed!", "danger")
 
     return render_template('upload_form.html', form=form)
 
