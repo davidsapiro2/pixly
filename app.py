@@ -117,7 +117,9 @@ def display_photo(photo_name):
     return render_template("display_photo.html", photo=photo, base_url=base_url, metadata=metadata)
 
 
-# @app.route("/photos/<photo_id>", methods=["GET", "POST"])
-# def edit_photo(photo_name):
+@app.route("/photos/<photo_name>/edit", methods=["GET", "POST"])
+def edit_photo(photo_name):
 
-#     photo = Image.query.get_or_404(photo_name)
+    photo = Image.query.get_or_404(photo_name)
+
+    return render_template('edit_photo.html', photo=photo, base_url=base_url)
