@@ -42,8 +42,7 @@ def extract_metadata(img):
         for key in exif_dict["0th"]:
             image_metadata[TAGS[int(key)]] = exif_dict["0th"][key]
 
-        image_metadata["GPS"] = gps_data_parser(exif_dict["GPS"])
-
+    image_metadata["GPS"] = gps_data_parser(exif_dict["GPS"]) if exif_dict["GPS"] else None
     image_metadata["format"] = img.format
     image_metadata["mode"] = img.mode
     image_metadata["size"] = img.size
@@ -74,7 +73,26 @@ def format_metadata(metadata):
 
 
 def gps_data_parser(gps_data):
-    return str(gps_data)
+    def _convert_to_degrees(coords):
+        """Convert GPS coordinates in (numerator, denominator) format to decimal degrees."""
+        degrees = coords[0][0] / coords[0][1]
+        minutes = coords[1][0] / coords[1][1] / 60.0
+        seconds = coords[2][0] / coords[2][1] / 3600.0
+        return degrees + minutes + seconds
+
+    latitude_direction = gps_data[1].decode('utf-8')
+    longitude_direction = gps_data[3].decode('utf-8')
+
+    latitude = _convert_to_degrees(gps_data[2])
+    longitude = _convert_to_degrees(gps_data[4])
+
+    # Apply direction
+    if latitude_direction == 'S':
+        latitude = -latitude
+    if longitude_direction == 'W':
+        longitude = -longitude
+
+    return (latitude, longitude)
 
 
 def clean_metadata(metadata):
