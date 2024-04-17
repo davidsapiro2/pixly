@@ -1,4 +1,4 @@
-.page-container {
+#page-container {
   height: 85vh;
   width: 100vw;
   display: flex;
@@ -7,10 +7,15 @@
 }
 
 #edit-container {
-  height: 75%;
-  width: 75%;
   display:flex;
   justify-content: center;
   align-items: center;
   border-radius: 5px;
+}
+
+#button-container {
+  width: 66.6vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
