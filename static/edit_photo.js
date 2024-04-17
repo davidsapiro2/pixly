@@ -9,6 +9,7 @@ let filterTypes;
 const editContainer = document.getElementById("edit-container");
 const pageContainer = document.getElementById("page-container");
 const imageUrl = pageContainer.getAttribute("data-imageUrl");
+const imageFilename = pageContainer.getAttribute("data-imageFilename");
 
 function preload() {
   // Load the image from a known URL
@@ -16,7 +17,7 @@ function preload() {
 }
 
 function setup() {
-  img.resize(windowWidth/1.5, 0); // Resize image to fit the window width while maintaining aspect ratio
+  img.resize(windowWidth / 1.5, 0); // Resize image to fit the window width while maintaining aspect ratio
   displayWidth = img.width;
   displayHeight = img.height;
   canvas = createCanvas(displayWidth, displayHeight); // Adjust the canvas size as needed
@@ -28,7 +29,7 @@ function setup() {
     "THRESHOLD": THRESHOLD,
     "INVERT": INVERT,
     "BLUR": BLUR,
-  }
+  };
 }
 
 function draw() {
@@ -74,25 +75,41 @@ function downloadImage() {
 function applySepiaFilter(img) {
   img.loadPixels();  // Load the pixels of the image to manipulate them
 
-  for (let y = 0; y < img.height; y++) {
-      for (let x = 0; x < img.width; x++) {
-          let index = (x + y * img.width) * 4;  // Calculate the index in the pixel array
-          let r = img.pixels[index];
-          let g = img.pixels[index + 1];
-          let b = img.pixels[index + 2];
+  // Loop through every pixel by incrementing by 4 each step (for each RGBA set)
+  for (let i = 0; i < img.pixels.length; i += 4) {
+    let r = img.pixels[i];     // Red value
+    let g = img.pixels[i + 1]; // Green value
+    let b = img.pixels[i + 2]; // Blue value
 
-          // Sepia formula
-          let tr = (0.393 * r) + (0.769 * g) + (0.189 * b);
-          let tg = (0.349 * r) + (0.686 * g) + (0.168 * b);
-          let tb = (0.272 * r) + (0.534 * g) + (0.131 * b);
+    // Apply the Sepia formula
+    let tr = (0.393 * r) + (0.769 * g) + (0.189 * b);
+    let tg = (0.349 * r) + (0.686 * g) + (0.168 * b);
+    let tb = (0.272 * r) + (0.534 * g) + (0.131 * b);
 
-          // Clamping the values to ensure they remain between 0 and 255
-          img.pixels[index] = tr > 255 ? 255 : tr;
-          img.pixels[index + 1] = tg > 255 ? 255 : tg;
-          img.pixels[index + 2] = tb > 255 ? 255 : tb;
-      }
+    // Clamping the values to ensure they remain within the 0-255 range
+    img.pixels[i] = tr > 255 ? 255 : tr;
+    img.pixels[i + 1] = tg > 255 ? 255 : tg;
+    img.pixels[i + 2] = tb > 255 ? 255 : tb;
   }
 
   img.updatePixels();  // Update the image with the new pixel data
 }
+
+
+document.getElementById('saveButton').addEventListener('click', function () {
+  const domCanvas = document.querySelector("canvas");
+  domCanvas.toBlob(async function (blob) {
+    const formData = new FormData();  // Create FormData to send the blob file
+    formData.append('image', blob);
+
+    const response = await fetch(`/photos/${imageFilename}/edit`, {
+      method: 'POST',
+      body: formData
+    });
+
+    const resData = response.json();
+
+    console.log(resData);
+  }, 'image/png');
+});
 

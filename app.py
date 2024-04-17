@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, flash
+from flask import Flask, render_template, redirect, flash, request, jsonify
 from forms import ImageUploadForm
 from models import db, connect_db, Image
 from sqlalchemy.exc import IntegrityError
@@ -117,9 +117,27 @@ def display_photo(photo_name):
     return render_template("display_photo.html", photo=photo, base_url=base_url, metadata=metadata)
 
 
-@app.route("/photos/<photo_name>/edit", methods=["GET", "POST"])
+@app.get("/photos/<photo_name>/edit")
 def edit_photo(photo_name):
 
     photo = Image.query.get_or_404(photo_name)
 
     return render_template('edit_photo.html', photo=photo, base_url=base_url)
+
+
+@app.post("/photos/<photo_name>/edit")
+def upload_edited_photo(photo_name):
+
+    print(request.files)
+
+    image_file = request.files["image"]
+
+    s3.upload_fileobj(
+        image_file,
+        bucket_name,
+        photo_name
+    )
+
+    return jsonify({
+        "success": "hell yeah"
+    })

@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<div id="page-container" data-imageUrl="{{base_url}}{{photo.filename}}">
+<div id="page-container" data-imageFilename="{{photo.filename}}" data-imageUrl="{{base_url}}{{photo.filename}}">
   <div id="button-container" class="bg-secondary">
     <button class="mb-1" onclick="downloadImage()">Download Image</button>
       <!-- <button id="grayscaleButton">Apply Grayscale</button> -->
@@ -17,6 +17,7 @@
       <br />
       Width: <input type="range" id="widthSlider" min="1" max="100" value="100">
       Height: <input type="range" id="heightSlider" min="1" max="100" value="100">
+      <button id="saveButton">Save Image</button>
   </div>
 
   <div id="edit-container" class="mt-4 bg-secondary">
