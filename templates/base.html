@@ -5,10 +5,31 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pixly</title>
+  <link rel="stylesheet" href="https://unpkg.com/bootstrap@5/dist/css/bootstrap.css">
+  <script src="https://unpkg.com/jquery"></script>
+  <script src="https://unpkg.com/bootstrap"></script>
+
+  <link rel="stylesheet" href="https://www.unpkg.com/bootstrap-icons/font/bootstrap-icons.css">
 </head>
 
 <body>
-  <h1>Hello</h1>
+
+  <nav class="navbar navbar-expand bg-secondary">
+    <div class="container-fluid">
+
+      <div class="navbar-header">
+        <a href="/" class="navbar-brand text-light">
+          <span>Pix.ly</span>
+        </a>
+      </div>
+
+      <ul class="nav navbar-nav navbar-right">
+
+        <li class="nav-item"><a class="nav-link text-light" href="/photos">All Photos</a></li>
+        <li class="nav-item"><a class="nav-link text-light" href="/photos/upload">Upload Photo</a></li>
+      </ul>
+    </div>
+  </nav>
 
   {% block content %}
   {% endblock %}

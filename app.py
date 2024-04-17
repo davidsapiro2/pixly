@@ -46,7 +46,6 @@ def upload_photo():
             image_file = form.image.data
             filename = secure_filename(image_file.filename)
 
-
             img = PillowImage.open(image_file)
             image_metadata = get_formatted_metadata(img)
 
