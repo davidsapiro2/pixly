@@ -4,7 +4,7 @@ from models import db, connect_db, Image
 import boto3
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
-from PIL import Image
+from PIL import Image as PillowImage
 import os
 from utils import get_formatted_metadata
 
@@ -45,13 +45,16 @@ def upload_photo():
         try:
             image_file = form.image.data
             filename = secure_filename(image_file.filename)
-            img = Image.open(image_file.stream)
 
+
+            img = PillowImage.open(image_file)
             image_metadata = get_formatted_metadata(img)
+
 
             for key in image_metadata:
                 print(key, ": ", image_metadata[key])
 
+            image_file.seek(0)
             s3.upload_fileobj(
                 image_file,
                 bucket_name,
@@ -82,10 +85,20 @@ def upload_photo():
             db.session.commit()
 
             flash("Image upload successful!")
-            return redirect("/")
+            return redirect("/photos")
 
-        except Exception:
-            print("Exception", Exception)
+        except Exception as ex:
+            print("Exception", ex)
             flash("Image upload failed!")
 
     return render_template('upload_form.html', form=form)
+
+
+@app.get("/photos")
+def display_photos():
+
+    photos = Image.query.all()
+    base_url = f"https://{bucket_name}.s3.{os.getenv('AWS_REGION')}.amazonaws.com/"
+
+    return render_template("all_photos.html", photos=photos, base_url=base_url)
+
