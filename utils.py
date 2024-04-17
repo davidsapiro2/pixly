@@ -42,7 +42,8 @@ def extract_metadata(img):
         for key in exif_dict["0th"]:
             image_metadata[TAGS[int(key)]] = exif_dict["0th"][key]
 
-    image_metadata["GPS"] = gps_data_parser(exif_dict["GPS"]) if exif_dict["GPS"] else None
+        image_metadata["GPS"] = gps_data_parser(exif_dict["GPS"]) if exif_dict["GPS"] else None
+
     image_metadata["format"] = img.format
     image_metadata["mode"] = img.mode
     image_metadata["size"] = img.size

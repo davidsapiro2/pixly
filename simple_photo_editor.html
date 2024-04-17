@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Editor with Resizing</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+</head>
+<body>
+    <input type="file" id="imageInput" accept="image/*" />
+    <button id="grayscaleButton">Apply Grayscale</button>
+    <button onclick="downloadImage()">Download Image</button>
+    <br/>
+    Width: <input type="range" id="widthSlider" min="1" max="100" value="100">
+    Height: <input type="range" id="heightSlider" min="1" max="100" value="100">
+
+    <script>
+        let img;
+        let canvas;
+        let displayWidth, displayHeight;
+        let widthSlider, heightSlider;
+
+        function setup() {
+            canvas = createCanvas(100, 100); // Initial small canvas, resized later
+            pixelDensity(1);
+            background(255);
+            textSize(16);
+            textAlign(CENTER, CENTER);
+            text('Please upload an image.', width / 2, height / 2);
+
+            // Sliders
+            widthSlider = document.getElementById('widthSlider');
+            heightSlider = document.getElementById('heightSlider');
+
+            widthSlider.addEventListener('input', adjustSize);
+            heightSlider.addEventListener('input', adjustSize);
+        }
+
+        function draw() {
+            if (img) {
+                clear();
+                image(img, 0, 0, displayWidth, displayHeight);
+            }
+        }
+
+        document.getElementById('imageInput').addEventListener('change', function(e) {
+            if (e.target.files) {
+                let file = e.target.files[0];
+                let fileReader = new FileReader();
+                fileReader.onload = function(event) {
+                    img = loadImage(event.target.result, () => {
+                        resizeCanvas(img.width, img.height);
+                        displayWidth = img.width;
+                        displayHeight = img.height;
+                        updateSliders();
+                    });
+                };
+                fileReader.readAsDataURL(file);
+            }
+        });
+
+        function updateSliders() {
+            widthSlider.max = img.width;
+            heightSlider.max = img.height;
+            widthSlider.value = img.width;
+            heightSlider.value = img.height;
+        }
+
+        function adjustSize() {
+            displayWidth = widthSlider.value;
+            displayHeight = heightSlider.value;
+        }
+
+        document.getElementById('grayscaleButton').addEventListener('click', function() {
+            if (img) {
+                img.filter(GRAY);
+                redraw(); // Trigger a redraw to show the updated image
+            }
+        });
+
+        function downloadImage() {
+            if (img) {
+                saveCanvas(canvas, 'editedImage', 'jpg');
+            } else {
+                console.error("No image loaded");
+            }
+        }
+    </script>
+</body>
+</html>
