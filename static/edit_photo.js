@@ -5,6 +5,9 @@ let canvas;
 let displayWidth, displayHeight;
 let widthSlider, heightSlider;
 
+let currentStamp;
+const stamps = {};
+
 const editContainer = document.getElementById("edit-container");
 const pageContainer = document.getElementById("page-container");
 const imageUrl = pageContainer.getAttribute("data-imageUrl");
@@ -12,6 +15,8 @@ const imageFilename = pageContainer.getAttribute("data-imageFilename");
 
 function preload() {
   img = loadImage(imageUrl);
+  stamps.stampDave = loadImage('/static/davidStamp.png');
+  stamps.stampCoop = loadImage('/static/coopStamp.png');
 }
 
 function setup() {
@@ -22,11 +27,13 @@ function setup() {
   canvas.parent(editContainer);
   pixelDensity(1);
   updateSliders();
+  background(255);
+  image(img, 0, 0, displayWidth, displayHeight); // Display the image
+  currentStamp = stamps.stampDave;
 }
 
 function draw() {
-  background(255);
-  image(img, 0, 0, displayWidth, displayHeight); // Display the image
+  //allows for continuous updating of the canvas.
 }
 
 function updateSliders() {
@@ -53,23 +60,23 @@ document.getElementById('button-filter').addEventListener('click', applyFilter);
 function applyFilter() {
   const filterType = document.getElementById('image-filter').value;
 
-  if (filterType === "INVERT") img.filter(INVERT);
-  if (filterType === "GRAY") img.filter(GRAY);
-  if (filterType === "THRESHOLD") img.filter(THRESHOLD);
-  if (filterType === "BLUR") img.filter(BLUR, 10);
+  if (filterType === "INVERT") filter(INVERT);
+  if (filterType === "GRAY") filter(GRAY);
+  if (filterType === "THRESHOLD") filter(THRESHOLD);
+  if (filterType === "BLUR") filter(BLUR, 10);
   if (filterType === "SEPIA") applySepiaFilter(img);
 
   redraw(); // Redraw to apply the filter
 }
 
-function applySepiaFilter(img) {
-  img.loadPixels();  // Load the pixels of the image to manipulate them
+function applySepiaFilter() {
+  loadPixels();  // Load the pixels of the image to manipulate them
 
   // Loop through every pixel by incrementing by 4 each step (for each RGBA set)
-  for (let i = 0; i < img.pixels.length; i += 4) {
-    let r = img.pixels[i];     // Red value
-    let g = img.pixels[i + 1]; // Green value
-    let b = img.pixels[i + 2]; // Blue value
+  for (let i = 0; i < pixels.length; i += 4) {
+    let r = pixels[i];     // Red value
+    let g = pixels[i + 1]; // Green value
+    let b = pixels[i + 2]; // Blue value
 
     // Apply the Sepia formula
     let tr = (0.393 * r) + (0.769 * g) + (0.189 * b);
@@ -77,12 +84,27 @@ function applySepiaFilter(img) {
     let tb = (0.272 * r) + (0.534 * g) + (0.131 * b);
 
     // Clamping the values to ensure they remain within the 0-255 range
-    img.pixels[i] = tr > 255 ? 255 : tr;
-    img.pixels[i + 1] = tg > 255 ? 255 : tg;
-    img.pixels[i + 2] = tb > 255 ? 255 : tb;
+    pixels[i] = tr > 255 ? 255 : tr;
+    pixels[i + 1] = tg > 255 ? 255 : tg;
+    pixels[i + 2] = tb > 255 ? 255 : tb;
   }
 
-  img.updatePixels();  // Update the image with the new pixel data
+  updatePixels();  // Update the image with the new pixel data
+}
+
+document.getElementById('stamp-selector').addEventListener('change', updateStamp);
+
+function updateStamp() {
+  console.log("in updateStamp");
+  const stampChoice = document.getElementById('stamp-selector').value;
+  currentStamp = stamps[stampChoice];
+}
+
+function mousePressed() {
+  // Check if the mouse position is within the image bounds
+  if (mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
+      image(currentStamp, mouseX - currentStamp.width / 2, mouseY - currentStamp.height / 2);
+  }
 }
 
 
