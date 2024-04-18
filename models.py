@@ -1,13 +1,57 @@
 """SQLAlchemy models for Pixly"""
 
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.dialects.postgresql import TSVECTOR
+from sqlalchemy.sql.expression import func
 
 db = SQLAlchemy()
+
 
 class Image(db.Model):
     """Image data"""
 
     __tablename__ = "images"
+
+    def __init__(self, filename, gps, mode, format, height, width, datetime, focal_length,
+                 shutterspeed, aperture, iso, fnumber, exposure_time, lens_make, lens_model,
+                 device_make, device_model):
+        self.filename=filename
+        self.gps=gps
+        self.mode=mode
+        self.format=format
+        self.height=height
+        self.width=width
+        self.datetime=datetime
+        self.focal_length=focal_length
+        self.shutterspeed=shutterspeed
+        self.aperture=aperture
+        self.iso=iso
+        self.fnumber=fnumber
+        self.exposure_time=exposure_time
+        self.lens_make=lens_make
+        self.lens_model=lens_model
+        self.device_make=device_make
+        self.device_model=device_model
+        self.update_search_vector()
+
+    def update_search_vector(self):
+        self.search_vector = func.to_tsvector('english', ' '.join(filter(None, [
+            self.filename,
+            self.gps,
+            self.mode,
+            self.format,
+            self.datetime,
+            self.focal_length,
+            self.shutterspeed,
+            self.aperture,
+            self.iso,
+            self.fnumber,
+            self.exposure_time,
+            self.lens_make,
+            self.lens_model,
+            self.device_make,
+            self.device_model
+        ])))
 
     filename = db.Column(
         db.Text,
@@ -33,7 +77,6 @@ class Image(db.Model):
     width = db.Column(
         db.Integer,
     )
-
 
     datetime = db.Column(
         db.Text
@@ -77,6 +120,10 @@ class Image(db.Model):
 
     device_model = db.Column(
         db.Text,
+    )
+
+    search_vector = db.Column(
+        TSVECTOR
     )
 
 

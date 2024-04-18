@@ -33,7 +33,6 @@ function setup() {
 }
 
 function draw() {
-  //allows for continuous updating of the canvas.
 }
 
 function updateSliders() {
