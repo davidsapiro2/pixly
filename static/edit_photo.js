@@ -62,14 +62,96 @@ document.getElementById('button-filter').addEventListener('click', applyFilter);
 
 function applyFilter() {
   const filterType = document.getElementById('image-filter').value;
-
   if (filterType === "INVERT") filter(INVERT);
   if (filterType === "GRAY") filter(GRAY);
   if (filterType === "THRESHOLD") filter(THRESHOLD);
   if (filterType === "BLUR") filter(BLUR, 10);
-  if (filterType === "SEPIA") applySepiaFilter(img);
+  if (filterType === "SEPIA") applySepiaFilter();
+  if (filterType === "SOBEL") applySobelFilter();
+  if (filterType === "PIXELATE") applyPixelation(5);
 
-  img = get();
+  img = get()
+}
+
+function applyPixelation(pixelSize) {
+  loadPixels(); // Load the pixels from the canvas into the pixels array
+  let w = width; // Use the width and height of the canvas
+  let h = height;
+
+  for (let x = 0; x < w; x += pixelSize) {
+    for (let y = 0; y < h; y += pixelSize) {
+      // Get the color of the top-left pixel of each block
+      let i = (x + y * w) * 4;
+      let colors = [pixels[i], pixels[i+1], pixels[i+2], pixels[i+3]];
+
+      // Set every pixel in the block to this color
+      for (let n = 0; n < pixelSize; n++) {
+        for (let m = 0; m < pixelSize; m++) {
+          if (x + n < w && y + m < h) { // Check bounds to avoid going outside the canvas dimensions
+            let j = ((x + n) + (y + m) * w) * 4;
+            pixels[j] = colors[0];
+            pixels[j+1] = colors[1];
+            pixels[j+2] = colors[2];
+            pixels[j+3] = colors[3];
+          }
+        }
+      }
+    }
+  }
+  updatePixels(); // Update the canvas with the modified pixels array
+}
+
+function applySobelFilter() {
+  let kernelX = [
+      [-1, 0, 1],
+      [-2, 0, 2],
+      [-1, 0, 1]
+  ];
+  let kernelY = [
+      [-1, -2, -1],
+      [0, 0, 0],
+      [1, 2, 1]
+  ];
+
+  // Capture the current canvas pixels
+  let currCanvas = get();
+  currCanvas.loadPixels();
+
+  // Create a new image to store the edge data
+  let edgeImg = createImage(currCanvas.width, currCanvas.height);
+  edgeImg.loadPixels();
+
+  for (let x = 1; x < currCanvas.width - 1; x++) {
+      for (let y = 1; y < currCanvas.height - 1; y++) {
+          let sumX = 0;
+          let sumY = 0;
+
+          // Apply the kernels to the pixel at (x, y)
+          for (let i = -1; i <= 1; i++) {
+              for (let j = -1; j <= 1; j++) {
+                  // Calculate the index for the pixels array
+                  let px = ((x + i) + (y + j) * currCanvas.width) * 4;
+                  // Assuming grayscale, we take the red channel's intensity
+                  let r = currCanvas.pixels[px];
+
+                  sumX += r * kernelX[i + 1][j + 1];
+                  sumY += r * kernelY[i + 1][j + 1];
+              }
+          }
+
+          // Calculate the gradient magnitude
+          let grad = sqrt(sumX * sumX + sumY * sumY);
+          let index = (x + y * currCanvas.width) * 4;
+          edgeImg.pixels[index] = grad;
+          edgeImg.pixels[index + 1] = grad;
+          edgeImg.pixels[index + 2] = grad;
+          edgeImg.pixels[index + 3] = 255;  // Set alpha to opaque
+      }
+  }
+
+  // Update the pixels and set the edgeImg as the new display image
+  edgeImg.updatePixels();
+  image(edgeImg, 0, 0);
 }
 
 function applySepiaFilter() {

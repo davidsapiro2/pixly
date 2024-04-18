@@ -49,20 +49,12 @@ def upload_photo():
     form = ImageUploadForm()
 
     if form.validate_on_submit():
+
         try:
             image_file = form.image.data
             filename = secure_filename(image_file.filename)
-
             img = PillowImage.open(image_file)
             image_metadata = get_formatted_metadata(img)
-
-            image_file.seek(0)
-
-            s3.upload_fileobj(
-                image_file,
-                bucket_name,
-                filename
-            )
 
             new_image = Image(
                 filename=filename,
@@ -85,7 +77,15 @@ def upload_photo():
             )
 
             db.session.add(new_image)
-            db.session.commit()
+            db.session.flush()
+
+            image_file.seek(0)
+
+            s3.upload_fileobj(
+                image_file,
+                bucket_name,
+                filename
+            )
 
             flash("Image upload successful!", "success")
             return redirect("/photos")
@@ -93,10 +93,16 @@ def upload_photo():
         except IntegrityError as err:
             print("Exception", err)
             flash("Image name already taken.", "danger")
+            db.session.rollback()
 
         except Exception as err:
             print("Exception", err)
             flash("Image upload failed!", "danger")
+            db.session.rollback()
+
+        finally:
+            db.session.commit()
+
 
     return render_template('upload_form.html', form=form)
 
@@ -109,8 +115,7 @@ def display_photos():
         photos = Image.query.filter(Image.search_vector.ilike(f"%{search_term}%")).all()
     else:
         photos = Image.query.all() # Return all photos if no search term is provided
-    print(search_term)
-    print(photos)
+
     return render_template("all_photos.html", photos=photos, base_url=base_url)
 
 
@@ -159,8 +164,7 @@ def upload_edited_photo(photo_name):
 
 @app.route('/get_map')
 def get_map():
-    gps_string = request.args["location"]
-    [latitude, longitude] = gps_string.split(", ")
+    [latitude, longitude] = request.args["location"].split(", ")
 
     # Parameters as a dictionary
     params = {

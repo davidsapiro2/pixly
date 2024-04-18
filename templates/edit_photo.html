@@ -2,58 +2,54 @@
 
 {% block content %}
 
-<div class="container mt-5" id="page-container" data-imageFilename="{{photo.filename}}" data-imageUrl="{{base_url}}{{photo.filename}}">
+<div class="container mt-5" id="page-container" data-imageFilename="{{photo.filename}}"
+  data-imageUrl="{{base_url}}{{photo.filename}}">
   <!-- Button and Select Container -->
   <div id="button-container" class="row bg-secondary p-3">
-      <div class="col">
-          <!-- Dropdown for selecting image filter -->
-          <select name="image-filter" id="image-filter" class="form-select">
-              <option value="INVERT">Invert</option>
-              <option value="GRAY">Grayscale</option>
-              <option value="THRESHOLD">Black and white</option>
-              <option value="BLUR">Blur</option>
-              <option value="SEPIA">Sepia</option>
-          </select>
-        </div>
-        <div class="col-auto">
-        <!-- Button to apply selected filter -->
-        <button id="button-filter" class="btn btn-primary">Apply Filter</button>
-      </div>
+    <div class="col">
+      <!-- Dropdown for selecting image filter -->
+      <select name="image-filter" id="image-filter" class="form-select">
+        <option value="INVERT">Invert</option>
+        <option value="GRAY">Grayscale</option>
+        <option value="THRESHOLD">Black and white</option>
+        <option value="BLUR">Blur</option>
+        <option value="SEPIA">Sepia</option>
+        <option value="SOBEL">Edge Finder</option>
+        <option value="PIXELATE">Pixelate</option>
+      </select>
+    </div>
+    <div class="col-auto">
+      <!-- Button to apply selected filter -->
+      <button id="button-filter" class="btn btn-primary">Apply Filter</button>
+    </div>
 
-      <div class="col">
-          <!-- Dropdown for selecting image filter -->
-          <select name="stamp-selector" id="stamp-selector" class="form-select">
-            <option value="stampDave">Stamp Dave</option>
-            <option value="stampCoop">Stamp Coop</option>
-          </select>
-        </div>
+    <div class="col">
+      <!-- Dropdown for selecting image filter -->
+      <select name="stamp-selector" id="stamp-selector" class="form-select">
+        <option value="stampDave">Stamp Dave</option>
+        <option value="stampCoop">Stamp Coop</option>
+      </select>
+    </div>
   </div>
 
   <!-- Slider controls for image dimensions -->
   <div class="row d-flex justify-content-center align-items-center py-2 bg-secondary">
-      <div class="col-md-4 text-center text-light">
-          Width: <input type="range" id="widthSlider" class="form-range" min="1" max="100" value="100">
-      </div>
-      <div class="col-md-4 text-center text-light">
-          Height: <input type="range" id="heightSlider" class="form-range" min="1" max="100" value="100">
-      </div>
+    <div class="col-md-4 text-center text-light">
+      Width: <input type="range" id="widthSlider" class="form-range" min="1" max="100" value="100">
     </div>
-    <div class="mt-3 row">
-        <button id="saveButton" class="btn btn-success col-4 offset-4">Save Image</button>
+    <div class="col-md-4 text-center text-light">
+      Height: <input type="range" id="heightSlider" class="form-range" min="1" max="100" value="100">
     </div>
+  </div>
+  <div class="mt-3 row">
+    <button id="saveButton" class="btn btn-success col-4 offset-4">Save Image</button>
+  </div>
 
   <!-- Container for edited image -->
   <div id="edit-container" class="mt-4">
-      <!-- Dynamic content (image) will be displayed here -->
+    <!-- Dynamic content (image) will be displayed here -->
   </div>
 </div>
-
-
-<div>
-  map here
-  <img src="" alt="">
-</div>
-
 
 
 <script src="/static/edit_photo.js"></script>
