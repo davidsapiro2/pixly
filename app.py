@@ -53,9 +53,6 @@ def upload_photo():
             img = PillowImage.open(image_file)
             image_metadata = get_formatted_metadata(img)
 
-            for key in image_metadata:
-                print(key, ": ", image_metadata[key])
-
             image_file.seek(0)
             s3.upload_fileobj(
                 image_file,
@@ -130,7 +127,13 @@ def upload_edited_photo(photo_name):
 
     print(request.files)
 
+    photo = Image.query.get(photo_name)
     image_file = request.files["image"]
+
+    photo.height = request.form["height"]
+    photo.width = request.form["width"]
+
+    db.session.commit()
 
     s3.upload_fileobj(
         image_file,

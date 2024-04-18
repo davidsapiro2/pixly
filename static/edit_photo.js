@@ -11,7 +11,6 @@ const imageUrl = pageContainer.getAttribute("data-imageUrl");
 const imageFilename = pageContainer.getAttribute("data-imageFilename");
 
 function preload() {
-  // Load the image from a known URL
   img = loadImage(imageUrl);
 }
 
@@ -49,7 +48,9 @@ function adjustSize() {
   resizeCanvas(displayWidth, displayHeight); // Resize the canvas to new dimensions
 }
 
-document.getElementById('button-filter').addEventListener('click', function () {
+document.getElementById('button-filter').addEventListener('click', applyFilter);
+
+function applyFilter() {
   const filterType = document.getElementById('image-filter').value;
 
   if (filterType === "INVERT") img.filter(INVERT);
@@ -59,7 +60,7 @@ document.getElementById('button-filter').addEventListener('click', function () {
   if (filterType === "SEPIA") applySepiaFilter(img);
 
   redraw(); // Redraw to apply the filter
-});
+}
 
 function applySepiaFilter(img) {
   img.loadPixels();  // Load the pixels of the image to manipulate them
@@ -90,6 +91,8 @@ document.getElementById('saveButton').addEventListener('click', function () {
   domCanvas.toBlob(async function (blob) {
     const formData = new FormData();  // Create FormData to send the blob file
     formData.append('image', blob);
+    formData.append("height", displayHeight);
+    formData.append("width", displayWidth);
 
     const response = await fetch(`/photos/${imageFilename}/edit`, {
       method: 'POST',
@@ -98,35 +101,30 @@ document.getElementById('saveButton').addEventListener('click', function () {
 
     const resData = await response.json();
 
-    if(response.ok) {
-      const alert = document.createElement('div');
-      alert.className = 'alert alert-success alert-dismissible fade show';
-      alert.role = 'alert';
-      alert.textContent = 'Image saved';
-
-      const closeButton = document.createElement('button');
-      closeButton.type = 'button';
-      closeButton.className = 'btn-close';
-      closeButton.setAttribute('data-bs-dismiss', 'alert');
-      closeButton.setAttribute('aria-label', 'Close');
-      alert.appendChild(closeButton);
-
+    if (response.ok) {
+      const alert = createAlertMessage("Image Saved", "success");
       document.getElementById('page-container').prepend(alert);
     } else {
-      const alert = document.createElement('div');
-      alert.className = 'alert alert-danger alert-dismissible fade show';
-      alert.role = 'alert';
-      alert.textContent = 'Save failed';
-
-      const closeButton = document.createElement('button');
-      closeButton.type = 'button';
-      closeButton.className = 'btn-close';
-      closeButton.setAttribute('data-bs-dismiss', 'alert');
-      closeButton.setAttribute('aria-label', 'Close');
-      alert.appendChild(closeButton);
-
+      const alert = createAlertMessage("Save failed", "danger");
       document.getElementById('page-container').prepend(alert);
     }
   });
 });
+
+
+function createAlertMessage(message, type) {
+  const alert = document.createElement('div');
+  alert.className = `alert alert-${type} alert-dismissible fade show`;
+  alert.role = 'alert';
+  alert.textContent = message;
+
+  const closeButton = document.createElement('button');
+  closeButton.type = 'button';
+  closeButton.className = 'btn-close';
+  closeButton.setAttribute('data-bs-dismiss', 'alert');
+  closeButton.setAttribute('aria-label', 'Close');
+  alert.appendChild(closeButton);
+
+  return alert;
+}
 
