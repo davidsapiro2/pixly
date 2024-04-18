@@ -7,7 +7,6 @@ from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
 from PIL import Image as PillowImage
 import os
-from sqlalchemy_searchable import make_searchable
 from utils import get_formatted_metadata, get_metadata_for_display
 
 app = Flask(__name__)
@@ -20,7 +19,6 @@ app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["DATABASE_URL"]
 app.config['SQLALCHEMY_ECHO'] = False
 
 connect_db(app)
-make_searchable(db.metadata)
 
 # AWS S3 Configuration
 s3 = boto3.client(
@@ -38,7 +36,7 @@ base_url = f"https://{bucket_name}.s3.{os.getenv('AWS_REGION')}.amazonaws.com/"
 def homepage():
     """Returns homepage"""
 
-    return render_template("base.html")
+    return render_template("home.html")
 
 
 @app.route("/photos/upload", methods=["GET", "POST"])
@@ -105,7 +103,7 @@ def display_photos():
 
     search_term = request.args.get("searchTerm", "")
     if search_term:
-        photos = Image.query.filter(Image.search_vector.match(search_term)).all()
+        photos = Image.query.filter(Image.search_vector.ilike(f"%{search_term}%")).all()
     else:
         photos = Image.query.all() # Return all photos if no search term is provided
     print(search_term)

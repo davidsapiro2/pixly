@@ -93,7 +93,7 @@ def gps_data_parser(gps_data):
     if longitude_direction == 'W':
         longitude = -longitude
 
-    return (latitude, longitude)
+    return f"{latitude}, {longitude}"
 
 
 def clean_metadata(metadata):
