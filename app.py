@@ -1,8 +1,10 @@
-from flask import Flask, render_template, redirect, flash, request, jsonify
+from flask import Flask, render_template, redirect, flash, request, jsonify, send_file
 from forms import ImageUploadForm
 from models import db, connect_db, Image
 from sqlalchemy.exc import IntegrityError
 import boto3
+import requests
+from io import BytesIO
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
 from PIL import Image as PillowImage
@@ -115,6 +117,7 @@ def display_photos():
 def display_photo(photo_name):
 
     photo = Image.query.get_or_404(photo_name)
+
     metadata = get_metadata_for_display(photo)
 
     return render_template("display_photo.html", photo=photo, base_url=base_url, metadata=metadata)
@@ -150,3 +153,25 @@ def upload_edited_photo(photo_name):
     return jsonify({
         "message": "Image saved"
     })
+
+
+
+@app.route('/get_map')
+def get_map():
+    api_key = "something"  # Remember to secure your API key
+    latitude = 40.712776  # New York latitude
+    longitude = -74.005974  # New York longitude
+    map_url = f"https://www.mapquestapi.com/staticmap/v5/map?key={api_key}&center={latitude},{longitude}&size=600,400&locations={latitude},{longitude}|marker-sm-22407F-2A4DB3"
+
+    response = requests.get(map_url)
+
+    # Check if the request was successful
+    if response.status_code == 200:
+        # Convert the response content into a BytesIO object
+        image = BytesIO(response.content)
+        image.seek(0)
+
+        # Serve the image directly
+        return send_file(image, mimetype='image/png')
+    else:
+        return "Failed to fetch the map", 500

@@ -155,3 +155,23 @@ function createAlertMessage(message, type) {
   return alert;
 }
 
+
+const apiKey = "something"
+async function getMap(location) {
+  const latitude = 40.712776;   // New York latitude
+  const longitude = -74.005974; // New York longitude
+  const mapUrl = `https://www.mapquestapi.com/staticmap/v5/map?key=${apiKey}&center=${latitude},${longitude}&size=600,400&locations=${latitude},${longitude}|marker-sm-22407F-2A4DB3`;
+
+  const response = await fetch(mapUrl)
+  const imgBlob = await response.blob();
+
+  const domImage = document.querySelector('img');
+
+  const imgURL = URL.createObjectURL(imgBlob);
+  domImage.src = imgURL;
+
+};
+
+
+
+
