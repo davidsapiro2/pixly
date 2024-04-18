@@ -103,7 +103,7 @@ function updateStamp() {
 function mousePressed() {
   // Check if the mouse position is within the image bounds
   if (mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
-      image(currentStamp, mouseX - currentStamp.width / 2, mouseY - currentStamp.height / 2);
+    image(currentStamp, mouseX - currentStamp.width / 2, mouseY - currentStamp.height / 2);
   }
 }
 

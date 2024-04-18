@@ -100,6 +100,8 @@ def upload_photo():
 @app.get("/photos")
 def display_photos():
 
+    search_term = request.args.get("searchTerm", "")
+    print(search_term)
     photos = Image.query.all()
 
     return render_template("all_photos.html", photos=photos, base_url=base_url)

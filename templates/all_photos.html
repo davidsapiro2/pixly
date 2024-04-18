@@ -5,10 +5,21 @@
 <div class="container">
   <div class="row">
 
+    <form class="col-8 offset-2 mb-5 p-0" action="/photos">
+      <div class="form-row align-items-center">
+          <div class="col-9 d-inline-block">
+              <input id="searchTerm" name="searchTerm" type="text" class="form-control" placeholder="Search">
+          </div>
+          <div class="col-2 d-inline-block float-end">
+              <button type="submit" class="btn btn-primary w-100">Go</button>
+          </div>
+      </div>
+  </form>
+
     {% for photo in photos %}
 
-    <a class="col-8 offset-2" href="/photos/{{photo.filename}}">
-    <div class="card mb-4 p-4 bg-secondary">
+    <a class="col-8 offset-2 p-0" href="/photos/{{photo.filename}}">
+      <div class="card mb-4 p-4 bg-secondary w-100">
         <h6 class="text-light card-title mb-3">{{photo.filename}}</h6>
         <img src="{{base_url}}{{photo.filename}}" alt="">
       </div>
