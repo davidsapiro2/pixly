@@ -139,5 +139,5 @@ def upload_edited_photo(photo_name):
     )
 
     return jsonify({
-        "success": "hell yeah"
+        "message": "Image saved"
     })

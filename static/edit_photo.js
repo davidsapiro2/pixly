@@ -4,7 +4,6 @@ let img;
 let canvas;
 let displayWidth, displayHeight;
 let widthSlider, heightSlider;
-let filterTypes;
 
 const editContainer = document.getElementById("edit-container");
 const pageContainer = document.getElementById("page-container");
@@ -24,12 +23,6 @@ function setup() {
   canvas.parent(editContainer);
   pixelDensity(1);
   updateSliders();
-  filterTypes = {
-    "GRAY": GRAY,
-    "THRESHOLD": THRESHOLD,
-    "INVERT": INVERT,
-    "BLUR": BLUR,
-  };
 }
 
 function draw() {
@@ -68,10 +61,6 @@ document.getElementById('button-filter').addEventListener('click', function () {
   redraw(); // Redraw to apply the filter
 });
 
-function downloadImage() {
-  saveCanvas(canvas, 'editedImage', 'jpg');
-}
-
 function applySepiaFilter(img) {
   img.loadPixels();  // Load the pixels of the image to manipulate them
 
@@ -107,9 +96,37 @@ document.getElementById('saveButton').addEventListener('click', function () {
       body: formData
     });
 
-    const resData = response.json();
+    const resData = await response.json();
 
-    console.log(resData);
-  }, 'image/png');
+    if(response.ok) {
+      const alert = document.createElement('div');
+      alert.className = 'alert alert-success alert-dismissible fade show';
+      alert.role = 'alert';
+      alert.textContent = 'Image saved';
+
+      const closeButton = document.createElement('button');
+      closeButton.type = 'button';
+      closeButton.className = 'btn-close';
+      closeButton.setAttribute('data-bs-dismiss', 'alert');
+      closeButton.setAttribute('aria-label', 'Close');
+      alert.appendChild(closeButton);
+
+      document.getElementById('page-container').prepend(alert);
+    } else {
+      const alert = document.createElement('div');
+      alert.className = 'alert alert-danger alert-dismissible fade show';
+      alert.role = 'alert';
+      alert.textContent = 'Save failed';
+
+      const closeButton = document.createElement('button');
+      closeButton.type = 'button';
+      closeButton.className = 'btn-close';
+      closeButton.setAttribute('data-bs-dismiss', 'alert');
+      closeButton.setAttribute('aria-label', 'Close');
+      alert.appendChild(closeButton);
+
+      document.getElementById('page-container').prepend(alert);
+    }
+  });
 });
 
