@@ -21,9 +21,13 @@
           {{key}}: {{metadata[key] or "Unknown"}}
         </li>
         {% endfor %}
-
       </ul>
+        {% if photo.gps %}
+          <h6 class="text-light">Location Taken: {{photo.gps}}</h6>
+          <img class="image-fluid" src="/get_map?location={{photo.gps}}" alt="">
+        {% endif %}
     </div>
+
 
 
   </div>

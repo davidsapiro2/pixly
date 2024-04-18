@@ -5,6 +5,7 @@ from sqlalchemy.exc import IntegrityError
 import boto3
 import requests
 from io import BytesIO
+from urllib.parse import urlencode
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
 from PIL import Image as PillowImage
@@ -32,7 +33,7 @@ s3 = boto3.client(
 bucket_name = os.getenv("AWS_BUCKET_NAME")
 
 base_url = f"https://{bucket_name}.s3.{os.getenv('AWS_REGION')}.amazonaws.com/"
-
+MAPQUEST_API_KEY = os.getenv("MAPQUEST_API_KEY")
 
 @app.get("/")
 def homepage():
@@ -158,10 +159,22 @@ def upload_edited_photo(photo_name):
 
 @app.route('/get_map')
 def get_map():
-    api_key = "something"  # Remember to secure your API key
-    latitude = 40.712776  # New York latitude
-    longitude = -74.005974  # New York longitude
-    map_url = f"https://www.mapquestapi.com/staticmap/v5/map?key={api_key}&center={latitude},{longitude}&size=600,400&locations={latitude},{longitude}|marker-sm-22407F-2A4DB3"
+    gps_string = request.args["location"]
+    [latitude, longitude] = gps_string.split(", ")
+
+    # Parameters as a dictionary
+    params = {
+        'key': MAPQUEST_API_KEY,
+        'center': f"{latitude},{longitude}",
+        'zoom': 11,
+        'size': "600,400",
+        'locations': f"{latitude},{longitude}|marker-sm-22407F-2A4DB3"
+    }
+
+    # Constructing the URL with urlencode
+    base_url = "https://www.mapquestapi.com/staticmap/v5/map"
+    query_string = urlencode(params)
+    map_url = f"{base_url}?{query_string}"
 
     response = requests.get(map_url)
 

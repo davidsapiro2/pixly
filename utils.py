@@ -8,7 +8,6 @@ def get_metadata_for_display(photo):
         "Format": photo.format,
         "Mode": photo.mode,
         "Date taken": photo.datetime,
-        "Location Taken": photo.gps,
         "Camera Make": photo.device_make,
         "Camera Model": photo.device_model,
         "Lens Make": photo.lens_make,
