@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<div class="container">
+<div class="container mb-5">
   <div class="d-flex justify-content-center">
     <h1>Welcome to Pix.ly!</h1>
   </div>
@@ -10,11 +10,22 @@
     <a href="/photos" class="btn btn-primary">View all photos</a>
     <a href="/photos/upload" class="btn btn-primary">Upload a photo</a>
   </div>
-  <!-- <div class="d-flex justify-content-center gap-2">
-    <div class="card bg-secondary">
-      <img src="" alt="">
+
+  <div class="mt-5 text-center">
+    <h4>With our proprietary editing technology, you can transfom your images</h6>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-5 card bg-secondary p-3">
+      <img src="/static/bagel.jpg" alt="">
     </div>
-  </div> -->
+    <div class="col-2 d-flex align-items-center justify-content-center">
+      <span><i class="bi bi-arrow-right h1"></i></span>
+    </div>
+    <div class="col-5 card p-3 bg-secondary">
+      <img src="/static/bagel-edited.jpg" alt="">
+    </div>
+  </div>
 </div>
 
 {% endblock %}

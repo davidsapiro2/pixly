@@ -4,6 +4,7 @@ let img;
 let canvas;
 let displayWidth, displayHeight;
 let widthSlider, heightSlider;
+let graphics;
 
 let currentStamp;
 const stamps = {};
@@ -25,6 +26,7 @@ function setup() {
   displayHeight = img.height;
   canvas = createCanvas(displayWidth, displayHeight); // Adjust the canvas size as needed
   canvas.parent(editContainer);
+  graphics = createGraphics(displayWidth, displayHeight); // Create a graphics buffer
   pixelDensity(1);
   updateSliders();
   background(255);
@@ -33,6 +35,7 @@ function setup() {
 }
 
 function draw() {
+  image(img, 0, 0, displayWidth, displayHeight);
 }
 
 function updateSliders() {
@@ -51,6 +54,7 @@ function updateSliders() {
 function adjustSize() {
   displayWidth = widthSlider.value;
   displayHeight = heightSlider.value;
+  console.log(displayHeight, displayWidth);
   resizeCanvas(displayWidth, displayHeight); // Resize the canvas to new dimensions
 }
 
@@ -65,7 +69,7 @@ function applyFilter() {
   if (filterType === "BLUR") filter(BLUR, 10);
   if (filterType === "SEPIA") applySepiaFilter(img);
 
-  redraw(); // Redraw to apply the filter
+  img = get();
 }
 
 function applySepiaFilter() {
@@ -91,6 +95,7 @@ function applySepiaFilter() {
   updatePixels();  // Update the image with the new pixel data
 }
 
+
 document.getElementById('stamp-selector').addEventListener('change', updateStamp);
 
 function updateStamp() {
@@ -103,6 +108,7 @@ function mousePressed() {
   // Check if the mouse position is within the image bounds
   if (mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
     image(currentStamp, mouseX - currentStamp.width / 2, mouseY - currentStamp.height / 2);
+    img = get();
   }
 }
 
