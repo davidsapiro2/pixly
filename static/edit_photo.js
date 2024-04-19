@@ -198,6 +198,8 @@ let isSorting = true;
 
 document.getElementById("sort-button").addEventListener("click", handleSortButtonClick);
 
+/** Toggles the sorting state and updates the appearance and text of
+ * the sorting button.*/
 function handleSortButtonClick() {
   isSorting = !isSorting;
   const buttonText = isSorting ? "Start sorting" : "Stop sorting";
