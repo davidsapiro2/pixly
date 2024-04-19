@@ -5,6 +5,34 @@ let displayWidth, displayHeight;
 let currentStamp;
 const stamps = {};
 
+const colors = {
+  blue: [0, 0, 255],
+  red: [255, 0, 0],
+  green: [0, 255, 0],
+  yellow: [255, 255, 0],
+  cyan: [0, 255, 255],
+  magenta: [255, 0, 255],
+  orange: [255, 165, 0],
+  purple: [128, 0, 128],
+  brown: [165, 42, 42],
+  pink: [255, 192, 203],
+  lime: [0, 255, 0],
+  black: [0, 0, 0],
+  white: [255, 255, 255],
+  gray: [128, 128, 128],
+  navy: [0, 0, 128]
+};
+let currColor = colors.black;
+
+const sizes = {
+  small: 3,
+  medium: 10,
+  large: 20
+};
+let currSize = sizes.small;
+
+let isDrawing = false;
+
 const editContainer = document.getElementById("edit-container");
 
 const imageUrl = document.getElementById("page-container").getAttribute("data-imageUrl");
@@ -278,12 +306,41 @@ function swapPixels(img, y1, x1, y2, x2) {
 }
 
 
-////////////
-// Stamps //
-////////////
+/////////////////////////
+// Canvas Click Events //
+////////////////////////
 
 
+document.getElementById('drawButton').addEventListener('click', toggleDraw);
 document.getElementById('stamp-selector').addEventListener('change', updateStamp);
+document.getElementById('color-selector').addEventListener('change', updateDrawOptions);
+document.getElementById('size-selector').addEventListener('change', updateDrawOptions);
+
+/** Toggles between draw mode and stamp mode. */
+function toggleDraw() {
+  isDrawing = !isDrawing;
+  document.getElementById("stamp-mode").classList.toggle("d-none");
+  document.getElementById("draw-mode").classList.toggle("d-none");
+
+  const buttonText = isDrawing ? "Switch to Stamp Mode" : "Switch to Draw Mode";
+  document.getElementById("drawButton").textContent = buttonText;
+}
+
+/** Updates color and size to user choices. */
+function updateDrawOptions() {
+  const colorChoice = document.getElementById('color-selector').value;
+  const sizeChoice = document.getElementById('size-selector').value;
+  currColor = colors[colorChoice];
+  currSize = sizes[sizeChoice];
+}
+
+/** Adds users drawings to the canvas. */
+function mouseDraw() {
+  fill(...currColor);
+  noStroke();
+  circle(mouseX, mouseY, currSize);
+  img = get();
+}
 
 /** Updates the current stamp based on user selection from a dropdown menu.
  * This function retrieves the user-selected stamp name from the dropdown,
@@ -296,17 +353,24 @@ function updateStamp() {
 
 /** Handles mouse press events within the p5.js canvas.
  * This function checks if the mouse click is within the bounds of the canvas
- * and, if so, draws the currently selected stamp image at the mouse position.
- * The stamp is centered on the cursor, and the canvas is updated to
- * include the stamped image.*/
+ * and, if so, applies the users stamp or drawing depending on which mode is
+ * currently active.*/
 function mousePressed() {
   // Check if the mouse position is within the image bounds
   if (mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
-    image(currentStamp, mouseX - currentStamp.width / 2, mouseY - currentStamp.height / 2);
-    img = get();
+    if (isDrawing) {
+      mouseDraw()
+    } else {
+      placeStamp();
+    }
   }
 }
 
+/** Adds stamp to the canvas. */
+function placeStamp() {
+  image(currentStamp, mouseX - currentStamp.width / 2, mouseY - currentStamp.height / 2);
+  img = get();
+}
 
 /////////////
 // Sliders //

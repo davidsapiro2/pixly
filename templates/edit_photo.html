@@ -7,7 +7,7 @@
 
   <!-- Button and Select Container -->
   <div id="button-container" class="row bg-secondary p-3 rounded-top">
-    <div class="col">
+    <div class="col-9">
       <!-- Dropdown for selecting image filter -->
       <select name="image-filter" id="image-filter" class="form-select">
         <option value="INVERT">Invert</option>
@@ -26,7 +26,7 @@
       <button id="button-filter" class="btn btn-primary">Apply Filter</button>
     </div>
 
-    <div class="col">
+    <div id="stamp-mode" class="col-8 mt-3">
       <!-- Dropdown for selecting image filter -->
       <select name="stamp-selector" id="stamp-selector" class="form-select">
         <option value="stampDave">Stamp Dave</option>
@@ -34,10 +34,40 @@
       </select>
     </div>
 
+    <div id="draw-mode" class="col-8 mt-3 d-flex gap-1  d-none">
+      <!-- Dropdown for selecting image filter -->
+      <select name="color-selector" id="color-selector" class="form-select">
+        <option value="black">Black</option>
+        <option value="blue">Blue</option>
+        <option value="green">Green</option>
+        <option value="yellow">Yellow</option>
+        <option value="cyan">Cyan</option>
+        <option value="magenta">Magenta</option>
+        <option value="orange">Orange</option>
+        <option value="purple">Purple</option>
+        <option value="brown">Brown</option>
+        <option value="pink">Pink</option>
+        <option value="lime">Lime</option>
+        <option value="white">White</option>
+        <option value="gray">Gray</option>
+        <option value="navy">Navy</option>
+      </select>
+
+      <select name="size-selector" id="size-selector" class="form-select">
+        <option value="small">Small</option>
+        <option value="medium">Medium</option>
+        <option value="large">Large</option>
+      </select>
+    </div>
+
+    <div class="col-auto mt-3">
+      <button id="drawButton" class="btn btn-primary">Switch to Draw Mode</button>
+    </div>
+
   </div>
 
   <!-- Slider controls for image dimensions -->
-  <div class="row rounded-bottom d-flex justify-content-center align-items-center py-2 bg-secondary">
+  <div class="row rounded-bottom d-flex justify-content-center align-items-center pt-1 pb-2 bg-secondary">
     <div class="col-md-4 text-center text-light">
       Width: <input type="range" id="widthSlider" class="form-range" min="1" max="100" value="100">
     </div>
