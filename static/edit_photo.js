@@ -5,6 +5,8 @@ let canvas;
 let displayWidth, displayHeight;
 let widthSlider, heightSlider;
 let graphics;
+let sortedImg;
+let sorted = true;
 
 let currentStamp;
 const stamps = {};
@@ -34,9 +36,7 @@ function setup() {
   currentStamp = stamps.stampDave;
 }
 
-let sortedImg;
-let sorted = true;
-let y = 0;
+document.getElementById("sort-button").addEventListener("click", handleSortButtonClick);
 
 function handleSortButtonClick() {
   sortedImg = get();
@@ -44,10 +44,13 @@ function handleSortButtonClick() {
   sorted = false;
 }
 
-
 function draw() {
   image(img, 0, 0, displayWidth, displayHeight);  // Display the main image
 
+  sortPixelsIfNecessary();
+}
+
+function sortPixelsIfNecessary() {
   if (!sorted) {  // Check if not sorted and y is within bounds
     sorted = true;
 
