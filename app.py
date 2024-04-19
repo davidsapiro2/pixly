@@ -107,7 +107,7 @@ def upload_photo():
             )
 
             flash("Image upload successful!", "success")
-            return redirect("/photos")
+            return redirect(f"/photos/{filename}")
 
         except IntegrityError as err:
             print("Exception", err)

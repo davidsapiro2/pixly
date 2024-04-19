@@ -1,6 +1,8 @@
 "use strict";
 
 let img;
+let initialImg;
+let initialDisplayWidth, initialDisplayHeight;
 let displayWidth, displayHeight;
 let currentStamp;
 const stamps = {};
@@ -38,6 +40,19 @@ const editContainer = document.getElementById("edit-container");
 const imageUrl = document.getElementById("page-container").getAttribute("data-imageUrl");
 const imageFilename = document.getElementById("page-container").getAttribute("data-imageFilename");
 
+////////////
+// revert //
+////////////
+
+document.getElementById("revert-button").addEventListener("click", revert);
+
+function revert() {
+  isSorting = false;
+  displayWidth = initialDisplayWidth;
+  displayHeight = initialDisplayHeight;
+  resizeCanvas(displayWidth, displayHeight); // Resize the canvas to n
+  img = initialImg;
+}
 
 //////////////////////////
 // preload, setup, draw //
@@ -47,6 +62,7 @@ const imageFilename = document.getElementById("page-container").getAttribute("da
  * memory and ready to use before any setup or drawing occurs. */
 function preload() {
   img = loadImage(imageUrl);
+  initialImg = img;
   stamps.stampDave = loadImage('/static/davidStamp.png');
   stamps.stampCoop = loadImage('/static/coopStamp.png');
 }
@@ -57,6 +73,8 @@ function preload() {
  * and draws the image*/
 function setup() {
   img.resize(windowWidth / 1.5, 0); // Resize image to fit the window width
+  initialDisplayHeight = img.height;
+  initialDisplayWidth = img.width;
   displayWidth = img.width; // Store the width of the resized image
   displayHeight = img.height; // Store the height of the resized image
 
@@ -222,7 +240,7 @@ function applyPixelation(pixelSize) {
 /////////////////
 
 let sortedImg;
-let isSorting = true;
+let isSorting = false;
 
 document.getElementById("sort-button").addEventListener("click", handleSortButtonClick);
 
@@ -230,7 +248,7 @@ document.getElementById("sort-button").addEventListener("click", handleSortButto
  * the sorting button.*/
 function handleSortButtonClick() {
   isSorting = !isSorting;
-  const buttonText = isSorting ? "Start sorting" : "Stop sorting";
+  const buttonText = isSorting ? "Stop sorting" : "Start sorting";
   const sortBtn = document.getElementById("sort-button");
 
   sortBtn.classList.toggle("btn-warning");
@@ -244,7 +262,7 @@ function handleSortButtonClick() {
  * If any swap is made, it indicates the image was not sorted, and 'sorted' is
  * set to false */
 function sortPixelsIfNecessary() {
-  if (!isSorting) {  // Check if not sorted and y is within bounds
+  if (isSorting) {  // Check if not sorted and y is within bounds
     sortedImg = get();
     sortedImg.loadPixels();
 
@@ -357,13 +375,25 @@ function updateStamp() {
  * currently active.*/
 function mousePressed() {
   // Check if the mouse position is within the image bounds
-  if (mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
-    if (isDrawing) {
-      mouseDraw()
-    } else {
-      placeStamp();
-    }
+  const isInBounds = mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height;
+  if (isInBounds && !isDrawing) {
+    placeStamp();
   }
+}
+
+function mouseDragged() {
+  const isInBounds = mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height;
+  if (isDrawing && isInBounds) {
+    // Set the stroke weight and color
+    strokeWeight(currSize);
+    stroke(...currColor);
+
+    // Draw a line from the previous mouse position to the current position
+    line(mouseX, mouseY, pmouseX, pmouseY);
+
+    img = get();
+  }
+
 }
 
 /** Adds stamp to the canvas. */
@@ -418,6 +448,7 @@ document.getElementById('saveButton').addEventListener('click', handleSaveButton
  * dimensions using FormData. Upon successful save, it displays a success alert,
  * and on failure, it shows an error alert. */
 function handleSaveButtonClick() {
+  initialImg = get();
   const domCanvas = document.querySelector("canvas");
   domCanvas.toBlob(async function (blob) {
 

@@ -13,23 +13,23 @@ class Image(db.Model):
     def __init__(self, filename, gps, mode, format, height, width, datetime, focal_length,
                  shutterspeed, aperture, iso, fnumber, exposure_time, lens_make, lens_model,
                  device_make, device_model):
-        self.filename=str(filename)
-        self.gps=str(gps)
-        self.mode=str(mode)
-        self.format=str(format)
-        self.height=height
-        self.width=width
-        self.datetime=str(datetime)
-        self.focal_length=str(focal_length)
-        self.shutterspeed=str(shutterspeed)
-        self.aperture=str(aperture)
-        self.iso=str(iso)
-        self.fnumber=str(fnumber)
-        self.exposure_time=str(exposure_time)
-        self.lens_make=str(lens_make)
-        self.lens_model=str(lens_model)
-        self.device_make=str(device_make)
-        self.device_model=str(device_model)
+        self.filename = str(filename)
+        self.gps = str(gps) if gps else None
+        self.mode = str(mode) if mode else None
+        self.format = str(format) if format else None
+        self.height = height
+        self.width = width
+        self.datetime = str(datetime) if datetime else None
+        self.focal_length = str(focal_length) if focal_length else None
+        self.shutterspeed = str(shutterspeed) if shutterspeed else None
+        self.aperture = str(aperture) if aperture else None
+        self.iso = str(iso) if iso else None
+        self.fnumber = str(fnumber) if fnumber else None
+        self.exposure_time = str(exposure_time) if exposure_time else None
+        self.lens_make = str(lens_make) if lens_make else None
+        self.lens_model = str(lens_model) if lens_model else None
+        self.device_make = str(device_make) if device_make else None
+        self.device_model = str(device_model) if device_model else None
         self.update_search_vector()
 
     def update_search_vector(self):
