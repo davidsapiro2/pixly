@@ -21,7 +21,6 @@ def get_metadata_for_display(photo):
     }
 
 
-
 def get_formatted_metadata(img):
     metadata = extract_metadata(img)
     formatted_metadata = format_metadata(metadata)
@@ -103,6 +102,3 @@ def clean_metadata(metadata):
         else:
             cleaned[key] = value
     return cleaned
-
-# https://pixly37.s3.us-east-2.amazonaws.com/Screenshot_from_2024-03-15_21-14-53.png
-# https://pixly37.s3.us-east-2.amazonaws.com/Screenshot_from_2024-03-15_21-14-53.png

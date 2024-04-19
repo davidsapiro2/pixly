@@ -34,9 +34,55 @@ function setup() {
   currentStamp = stamps.stampDave;
 }
 
-function draw() {
-  image(img, 0, 0, displayWidth, displayHeight);
+let sortedImg;
+let sorted = true;
+let y = 0;
+
+function handleSortButtonClick() {
+  sortedImg = get();
+  sortedImg.loadPixels();
+  sorted = false;
 }
+
+
+function draw() {
+  image(img, 0, 0, displayWidth, displayHeight);  // Display the main image
+
+  if (!sorted) {  // Check if not sorted and y is within bounds
+    sorted = true;
+
+    for (let y = 0; y < sortedImg.height; y++) {
+      for (let x = 0; x < sortedImg.width - 1; x++) {  // Iterate over the row
+        if (pixelValue(sortedImg, y, x) > pixelValue(sortedImg, y, x + 1)) {
+          swapPixels(sortedImg, y, x, y, x + 1);  // Swap pixels if out of order
+          sorted = false;  // Set rowSorted to false as a swap was needed
+        }
+      }
+    }
+    sortedImg.updatePixels();  // Update pixels on the canvas
+    img = sortedImg;
+  }
+}
+
+function elementIndex(img, y, x) {
+  return 4 * (y * img.width + x);
+}
+
+function pixelValue(img, y, x) {
+  const pixelIndex = elementIndex(img, y, x);
+  return img.pixels[pixelIndex] + img.pixels[pixelIndex + 1] + img.pixels[pixelIndex + 2];
+}
+
+function swapPixels(img, y1, x1, y2, x2) {
+  const pixel1Index = elementIndex(img, y1, x1);
+  const pixel2Index = elementIndex(img, y2, x2);
+
+  [img.pixels[pixel1Index], img.pixels[pixel2Index]] = [img.pixels[pixel2Index], img.pixels[pixel1Index]];
+  [img.pixels[pixel1Index + 1], img.pixels[pixel2Index + 1]] = [img.pixels[pixel2Index + 1], img.pixels[pixel1Index + 1]];
+  [img.pixels[pixel1Index + 2], img.pixels[pixel2Index + 2]] = [img.pixels[pixel2Index + 2], img.pixels[pixel1Index + 2]];
+  [img.pixels[pixel1Index + 3], img.pixels[pixel2Index + 3]] = [img.pixels[pixel2Index + 3], img.pixels[pixel1Index + 3]];
+}
+
 
 function updateSliders() {
   widthSlider = document.getElementById('widthSlider');
@@ -70,7 +116,7 @@ function applyFilter() {
   if (filterType === "SOBEL") applySobelFilter();
   if (filterType === "PIXELATE") applyPixelation(5);
 
-  img = get()
+  img = get();
 }
 
 function applyPixelation(pixelSize) {
@@ -82,7 +128,7 @@ function applyPixelation(pixelSize) {
     for (let y = 0; y < h; y += pixelSize) {
       // Get the color of the top-left pixel of each block
       let i = (x + y * w) * 4;
-      let colors = [pixels[i], pixels[i+1], pixels[i+2], pixels[i+3]];
+      let colors = [pixels[i], pixels[i + 1], pixels[i + 2], pixels[i + 3]];
 
       // Set every pixel in the block to this color
       for (let n = 0; n < pixelSize; n++) {
@@ -90,9 +136,9 @@ function applyPixelation(pixelSize) {
           if (x + n < w && y + m < h) { // Check bounds to avoid going outside the canvas dimensions
             let j = ((x + n) + (y + m) * w) * 4;
             pixels[j] = colors[0];
-            pixels[j+1] = colors[1];
-            pixels[j+2] = colors[2];
-            pixels[j+3] = colors[3];
+            pixels[j + 1] = colors[1];
+            pixels[j + 2] = colors[2];
+            pixels[j + 3] = colors[3];
           }
         }
       }
@@ -103,14 +149,14 @@ function applyPixelation(pixelSize) {
 
 function applySobelFilter() {
   let kernelX = [
-      [-1, 0, 1],
-      [-2, 0, 2],
-      [-1, 0, 1]
+    [-1, 0, 1],
+    [-2, 0, 2],
+    [-1, 0, 1]
   ];
   let kernelY = [
-      [-1, -2, -1],
-      [0, 0, 0],
-      [1, 2, 1]
+    [-1, -2, -1],
+    [0, 0, 0],
+    [1, 2, 1]
   ];
 
   // Capture the current canvas pixels
@@ -122,31 +168,31 @@ function applySobelFilter() {
   edgeImg.loadPixels();
 
   for (let x = 1; x < currCanvas.width - 1; x++) {
-      for (let y = 1; y < currCanvas.height - 1; y++) {
-          let sumX = 0;
-          let sumY = 0;
+    for (let y = 1; y < currCanvas.height - 1; y++) {
+      let sumX = 0;
+      let sumY = 0;
 
-          // Apply the kernels to the pixel at (x, y)
-          for (let i = -1; i <= 1; i++) {
-              for (let j = -1; j <= 1; j++) {
-                  // Calculate the index for the pixels array
-                  let px = ((x + i) + (y + j) * currCanvas.width) * 4;
-                  // Assuming grayscale, we take the red channel's intensity
-                  let r = currCanvas.pixels[px];
+      // Apply the kernels to the pixel at (x, y)
+      for (let i = -1; i <= 1; i++) {
+        for (let j = -1; j <= 1; j++) {
+          // Calculate the index for the pixels array
+          let px = ((x + i) + (y + j) * currCanvas.width) * 4;
+          // Assuming grayscale, we take the red channel's intensity
+          let r = currCanvas.pixels[px];
 
-                  sumX += r * kernelX[i + 1][j + 1];
-                  sumY += r * kernelY[i + 1][j + 1];
-              }
-          }
-
-          // Calculate the gradient magnitude
-          let grad = sqrt(sumX * sumX + sumY * sumY);
-          let index = (x + y * currCanvas.width) * 4;
-          edgeImg.pixels[index] = grad;
-          edgeImg.pixels[index + 1] = grad;
-          edgeImg.pixels[index + 2] = grad;
-          edgeImg.pixels[index + 3] = 255;  // Set alpha to opaque
+          sumX += r * kernelX[i + 1][j + 1];
+          sumY += r * kernelY[i + 1][j + 1];
+        }
       }
+
+      // Calculate the gradient magnitude
+      let grad = sqrt(sumX * sumX + sumY * sumY);
+      let index = (x + y * currCanvas.width) * 4;
+      edgeImg.pixels[index] = grad;
+      edgeImg.pixels[index + 1] = grad;
+      edgeImg.pixels[index + 2] = grad;
+      edgeImg.pixels[index + 3] = 255;  // Set alpha to opaque
+    }
   }
 
   // Update the pixels and set the edgeImg as the new display image
