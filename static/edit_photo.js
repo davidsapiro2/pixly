@@ -7,23 +7,6 @@ let displayWidth, displayHeight;
 let currentStamp;
 const stamps = {};
 
-const colors = {
-  blue: [0, 0, 255],
-  red: [255, 0, 0],
-  green: [0, 255, 0],
-  yellow: [255, 255, 0],
-  cyan: [0, 255, 255],
-  magenta: [255, 0, 255],
-  orange: [255, 165, 0],
-  purple: [128, 0, 128],
-  brown: [165, 42, 42],
-  pink: [255, 192, 203],
-  lime: [0, 255, 0],
-  black: [0, 0, 0],
-  white: [255, 255, 255],
-  gray: [128, 128, 128],
-  navy: [0, 0, 128]
-};
 let currColor = colors.black;
 
 const sizes = {
