@@ -3,6 +3,7 @@ from wtforms import FileField
 from wtforms.validators import DataRequired
 from flask_wtf.file import FileAllowed
 
+
 class ImageUploadForm(FlaskForm):
     """Form for uploading an image"""
 
@@ -10,4 +11,3 @@ class ImageUploadForm(FlaskForm):
         DataRequired(),
         FileAllowed(['jpg', 'png', 'jpeg'], 'Images only!')
     ])
-
