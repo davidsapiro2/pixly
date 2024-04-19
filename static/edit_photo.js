@@ -7,7 +7,6 @@ let widthSlider, heightSlider;
 let graphics;
 let sortedImg;
 let sorted = true;
-
 let currentStamp;
 const stamps = {};
 

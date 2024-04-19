@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
 from PIL import Image as PillowImage
 import os
-from utils import get_formatted_metadata, get_metadata_for_display
+from metadata_utils import get_formatted_metadata, get_metadata_for_display
 
 load_dotenv()
 
