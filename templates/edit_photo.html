@@ -6,7 +6,7 @@
   data-imageUrl="{{base_url}}{{photo.filename}}">
 
   <!-- Button and Select Container -->
-  <div id="button-container" class="row bg-secondary p-3">
+  <div id="button-container" class="row bg-secondary p-3 rounded-top">
     <div class="col">
       <!-- Dropdown for selecting image filter -->
       <select name="image-filter" id="image-filter" class="form-select">
@@ -34,18 +34,18 @@
       </select>
     </div>
 
-    <div>
-      <button id="sort-button" class="btn btn-primary">Sort Pixels</button>
-    </div>
   </div>
 
   <!-- Slider controls for image dimensions -->
-  <div class="row d-flex justify-content-center align-items-center py-2 bg-secondary">
+  <div class="row rounded-bottom d-flex justify-content-center align-items-center py-2 bg-secondary">
     <div class="col-md-4 text-center text-light">
       Width: <input type="range" id="widthSlider" class="form-range" min="1" max="100" value="100">
     </div>
     <div class="col-md-4 text-center text-light">
       Height: <input type="range" id="heightSlider" class="form-range" min="1" max="100" value="100">
+    </div>
+    <div class="my-2">
+      <button id="sort-button" class="btn btn-warning col-12">Start sorting</button>
     </div>
   </div>
 

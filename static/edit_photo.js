@@ -194,14 +194,19 @@ function applyPixelation(pixelSize) {
 /////////////////
 
 let sortedImg;
-let sorted = true;
+let isSorting = true;
 
 document.getElementById("sort-button").addEventListener("click", handleSortButtonClick);
 
 function handleSortButtonClick() {
-  sortedImg = get();
-  sortedImg.loadPixels();
-  sorted = false;
+  isSorting = !isSorting;
+  const buttonText = isSorting ? "Start sorting" : "Stop sorting";
+  const sortBtn = document.getElementById("sort-button");
+
+  sortBtn.classList.toggle("btn-warning");
+  sortBtn.classList.toggle("btn-danger");
+
+  sortBtn.textContent = buttonText;
 }
 
 /** Sorts the pixels of the image row by row if they are not already sorted.
@@ -209,14 +214,14 @@ function handleSortButtonClick() {
  * If any swap is made, it indicates the image was not sorted, and 'sorted' is
  * set to false */
 function sortPixelsIfNecessary() {
-  if (!sorted) {  // Check if not sorted and y is within bounds
-    sorted = true;
+  if (!isSorting) {  // Check if not sorted and y is within bounds
+    sortedImg = get();
+    sortedImg.loadPixels();
 
     for (let y = 0; y < sortedImg.height; y++) {
       for (let x = 0; x < sortedImg.width - 1; x++) {  // Iterate over the row
         if (pixelValue(sortedImg, y, x) > pixelValue(sortedImg, y, x + 1)) {
           swapPixels(sortedImg, y, x, y, x + 1);  // Swap pixels if out of order
-          sorted = false;  // Set rowSorted to false as a swap was needed
         }
       }
     }
@@ -364,10 +369,10 @@ function handleSaveButtonClick() {
 
     if (response.ok) {
       const alert = createAlertMessage("Image Saved", "success");
-      document.getElementById('page-container').prepend(alert);
+      document.getElementById('alert-container').prepend(alert);
     } else {
       const alert = createAlertMessage("Save failed", "danger");
-      document.getElementById('page-container').prepend(alert);
+      document.getElementById('alert-container').prepend(alert);
     }
   });
 }
@@ -385,7 +390,7 @@ function handleSaveButtonClick() {
  *    HTMLElement: The constructed alert element to be inserted into the DOM. */
 function createAlertMessage(message, type) {
   const alert = document.createElement('div');
-  alert.className = `alert alert-${type} alert-dismissible fade show`;
+  alert.className = `alert alert-${type} alert-dismissible fade show col-12`;
   alert.role = 'alert';
   alert.textContent = message;
 
