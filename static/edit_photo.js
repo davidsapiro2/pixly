@@ -30,7 +30,7 @@ const imageFilename = document.getElementById("page-container").getAttribute("da
 document.getElementById("revert-button").addEventListener("click", revert);
 
 function revert() {
-  handleSortButtonClick();
+  if(isSorting) handleSortButtonClick();
   displayWidth = initialDisplayWidth;
   displayHeight = initialDisplayHeight;
   resizeCanvas(displayWidth, displayHeight); // Resize the canvas to n
@@ -336,12 +336,12 @@ function updateDrawOptions() {
 }
 
 /** Adds users drawings to the canvas. */
-function mouseDraw() {
-  fill(...currColor);
-  noStroke();
-  circle(mouseX, mouseY, currSize);
-  img = get();
-}
+// function mouseDraw() {
+//   fill(...currColor);
+//   noStroke();
+//   circle(mouseX, mouseY, currSize);
+//   img = get();
+// }
 
 /** Updates the current stamp based on user selection from a dropdown menu.
  * This function retrieves the user-selected stamp name from the dropdown,
